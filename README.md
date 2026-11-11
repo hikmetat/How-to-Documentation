@@ -7,6 +7,7 @@ Records of how tools and systems have been configured, kept for future reference
 | Guide | Covers |
 |---|---|
 | [Monitor Input Switching](Monitor_Input_Switching_Setup_Guide.md) | Switching a BenQ RD320U monitor and its built-in KVM between an Arch Linux (Hyprland) PC and a Windows 10 laptop with a keyboard shortcut, using DDC/CI |
+| [SSH Key Access](SSH_Key_Access_Setup_Guide.md) | Key-only SSH and scp access from a Windows 10 laptop and Arch Linux under WSL 2 to an Arch Linux PC, with host aliases and SSH agents on both clients |
 
 ## Conventions
 
