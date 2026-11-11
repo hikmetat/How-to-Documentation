@@ -110,7 +110,7 @@ ssh -o PubkeyAuthentication=no <ARCH_USER>@<ARCH_IP>
 
 ### Server Address
 
-The Arch PC receives its address from the router by DHCP (`ip route` shows `proto dhcp`). A DHCP reservation on the router would fix it, but it could not be made: login to the router failed, and an attempt at a factory reset did not take effect (see [Troubleshooting Notes](#troubleshooting-notes)). The address was therefore left dynamic. Home routers commonly give a device the same address again, and the PC kept the same address throughout this setup, but this is not guaranteed.
+The Arch PC receives its address from the router by DHCP (`ip route` shows `proto dhcp`). A DHCP reservation on the router would fix it, but it could not be made, as access to the router's management page could not be obtained. The address was therefore left dynamic. Home routers commonly give a device the same address again, and the PC kept the same address throughout this setup, but this is not guaranteed.
 
 If the Arch PC stops answering, its current address is shown on the PC by:
 
@@ -293,8 +293,12 @@ Between Windows and WSL no SSH is used:
 Issues encountered and how they were resolved during setup:
 
 1. **`bash: line 1: hostname; uname -r: command not found`** – The command `ssh user@host 'hostname; uname -r'` had been typed in the Windows Command Prompt. `cmd.exe` passed the single quotes on literally, so the server's shell took the whole quoted string as one command name. Resolved by using PowerShell on Windows (or quoting with double quotes), and by using `uname -nr`, which needs no quoting at all.
-2. **Router login failed; factory reset did not take effect** – The credentials on the router's label and a password believed to be current were both refused. The Reset button was then held for about 30 seconds, yet the router kept its settings: the login page still asked for an existing password and the Wi-Fi name was unchanged. On TP-Link routers of this class there is no factory login password; after a completed reset the management page asks for a **new** password to be created, and the password printed on the label is the Wi-Fi key. TP-Link's guide says the Reset button is to be held until all LEDs turn on. The cause of the failed reset was not established, and the attempt was abandoned with 7 of the router's 10 login attempts used. The gateway was confirmed to be a TP-Link device from its MAC address prefix (`ip neigh show <ROUTER_IP>`). A completed reset would also erase the Wi-Fi and internet settings.
-3. **Fingerprint prompt after changing the alias** – Expected. With `HostKeyAlias`, the host key is filed under the alias, so a new or renamed alias brings one fingerprint prompt (compare it with the server's value). Entries under an old alias are removed with `ssh-keygen -R <OLD_ALIAS>`, which keeps a backup as `known_hosts.old`.
+2. **Fingerprint prompt after changing the alias** – Expected. With `HostKeyAlias`, the host key is filed under the alias, so a new or renamed alias brings one fingerprint prompt (compare it with the server's value). Entries under an old alias are removed with `ssh-keygen -R <OLD_ALIAS>`, which keeps a backup as `known_hosts.old`.
+
+## Pitfalls
+
+1. **If `ssh` reports `no such identity: ~/.ssh/id_ed25519: No such file or directory`, followed by `Permission denied (publickey)`,** the command may have been typed on the Arch PC itself, at its own keyboard or inside an SSH session already open on it, rather than on the laptop. The PC holds no client key, so it cannot log in to itself. In that case, check where the terminal belongs (Arch's default prompt reads `[user@host folder]$`; `uname -n` shows the host name) and run the command on the laptop. Where keyboard and monitor are shared through a KVM switch, the mistake is easily made. If an alias block was added to the PC's own `~/.ssh/config` by mistake, delete it there.
+2. **If `ssh` reports `connect to host <ARCH_IP> port 22: Connection timed out`,** nothing answered at that address. This may be because the Arch PC's address has changed, the PC is asleep or switched off, the laptop is on another network or a VPN (virtual private network), or the link between them (here, the powerline adapters) is down. In that case, check the PC's current address with `ip -brief address show eno1` and, if it has changed, update `HostName` in the alias on each client. From Windows, `Test-NetConnection <ARCH_IP> -Port 22` shows whether the server is reachable.
 
 ## Quick Reference
 
@@ -320,4 +324,3 @@ Issues encountered and how they were resolved during setup:
 - Storage of keys added to the Windows agent (registry, protected with DPAPI, the Windows Data Protection API): https://blog.ropnop.com/extracting-ssh-private-keys-from-windows-10-ssh-agent
 - Microsoft, Accessing network applications with WSL (NAT and mirrored modes): https://learn.microsoft.com/windows/wsl/networking
 - TP-Link Community, Address Reservation (Advanced > Network > DHCP Server): https://community.tp-link.com/en/home/forum/topic/197552 and, for the Archer AX10, https://community.tp-link.com/en/home/forum/topic/847400
-- TP-Link, Archer AX10 & AX1500 User Guide, FAQ (login password and reset): https://www.tp-link.com/us/user-guides/archer-ax10&ax1500_v1/faq
