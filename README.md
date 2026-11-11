@@ -11,5 +11,5 @@ Records of how tools and systems have been configured, kept for future reference
 
 ## Conventions
 
-- Each guide follows the same structure: Hardware and Context, Tested With, How It Works, a section per platform, Troubleshooting Notes, Quick Reference, Sources.
+- Each guide follows the same structure: Hardware and Context, Tested With, How It Works, a section per platform, Troubleshooting Notes, Pitfalls (where relevant), Quick Reference, Sources.
 - Serial numbers, user names and other identifying details are replaced with placeholders such as `<MONITOR_SERIAL>`.
